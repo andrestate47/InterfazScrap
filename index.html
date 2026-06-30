@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importador Inteligente de Leads | Scrap a CRM</title>
+    <meta name="description" content="Organiza y limpia automáticamente textos desordenados de prospectos de Facebook Ads, Instagram, WhatsApp y bases de datos a tu CRM.">
+    <!-- Google Fonts: Plus Jakarta Sans / Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css?v=13">
+</head>
+<body class="dark-theme">
+    <!-- Theme Toggle Floating Button -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema" title="Cambiar tema">
+        <i data-lucide="sun" class="sun-icon"></i>
+        <i data-lucide="moon" class="moon-icon"></i>
+    </button>
+
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="zap"></i>
+                </div>
+                <div>
+                    <span class="logo-tag">AI Parser v1.2</span>
+                    <h1 class="logo-title">Importar leads desde scrap</h1>
+                </div>
+            </div>
+            <p class="logo-subtitle">Importador Inteligente y CRM Comercial con IA.</p>
+            
+            <nav class="app-nav">
+                <button class="nav-tab active" data-view="view-importador">
+                    <i data-lucide="download-cloud"></i> Importador
+                </button>
+                <button class="nav-tab" data-view="view-crm">
+                    <i data-lucide="layout-dashboard"></i> CRM Leads
+                </button>
+            </nav>
+        </header>
+
+        <!-- View: IMPORTADOR -->
+        <main class="app-grid view-section active" id="view-importador">
+            <!-- Left Panel: Scrap & Settings -->
+            <section class="panel-left">
+                <div class="card glass-card">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <i data-lucide="text-quote" class="header-icon text-indigo"></i>
+                            <h2 class="card-title">Caja de Scrap</h2>
+                        </div>
+                        <button id="load-example-btn" class="btn btn-ghost btn-sm" type="button">
+                            <i data-lucide="wand-2"></i> Cargar Ejemplo
+                        </button>
+                    </div>
+
+                    <div class="textarea-wrapper">
+                        <textarea id="scrap-textarea" placeholder="Pega aquí el scrap completo...
+Ejemplo:
+Juan Pérez - 51999999999 - quiere automatizar WhatsApp
+María Gómez / maria@email.com / negocio de estética
+Empresa: Panadería Los Andes, Tel: +51988888888" aria-label="Pega aquí el scrap completo"></textarea>
+                    </div>
+
+                    <div class="card-footer" style="padding-top: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color); border-top: none;">
+                        <button id="process-btn" class="btn btn-primary btn-block">
+                            <span class="btn-text">Procesar datos</span>
+                            <i data-lucide="play" class="btn-icon icon-play"></i>
+                            <i data-lucide="loader-2" class="btn-icon icon-loader spin hide"></i>
+                        </button>
+                    </div>
+
+                    <div class="source-section" style="border-top: none; padding-top: 16px;">
+                        <label class="section-label">Fuente de los leads:</label>
+                        <div class="source-grid" role="radiogroup" aria-label="Fuente de los leads">
+                            <div class="source-card active" data-source="Google Maps" role="radio" aria-checked="true" tabindex="0">
+                                <i data-lucide="map-pin" class="source-icon"></i>
+                                <span>Google Maps</span>
+                            </div>
+                            <div class="source-card" data-source="Facebook Ads" role="radio" aria-checked="false" tabindex="0">
+                                <i data-lucide="facebook" class="source-icon"></i>
+                                <span>Facebook Ads</span>
+                            </div>
+                            <div class="source-card" data-source="Instagram" role="radio" aria-checked="false" tabindex="0">
+                                <i data-lucide="instagram" class="source-icon"></i>
+                                <span>Instagram</span>
+                            </div>
+                            <div class="source-card" data-source="WhatsApp" role="radio" aria-checked="false" tabindex="0">
+                                <i data-lucide="message-square" class="source-icon"></i>
+                                <span>WhatsApp</span>
+                            </div>
+                            <div class="source-card" data-source="Base comprada" role="radio" aria-checked="false" tabindex="0">
+                                <i data-lucide="database" class="source-icon"></i>
+                                <span>Base comprada</span>
+                            </div>
+                            <div class="source-card" data-source="Referidos" role="radio" aria-checked="false" tabindex="0">
+                                <i data-lucide="users" class="source-icon"></i>
+                                <span>Referidos</span>
+                            </div>
+                            <div class="source-card" data-source="Otro" role="radio" aria-checked="false" tabindex="0">
+                                <i data-lucide="help-circle" class="source-icon"></i>
+                                <span>Otro</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active integrations overview -->
+                <div class="card glass-card integration-status-card">
+                    <div class="integration-header">
+                        <span class="status-indicator active"></span>
+                        <h3>Destino de guardado</h3>
+                        <button id="open-settings-btn" class="btn btn-icon-only btn-ghost" title="Configurar Integraciones" aria-label="Configurar Integraciones">
+                            <i data-lucide="settings"></i>
+                        </button>
+                    </div>
+                    <div class="integration-details">
+                        <p id="active-integration-label">Simulado (Memoria Local)</p>
+                        <span class="integration-badge" id="integration-badge-type">Local Storage</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Parser Output -->
+            <section class="panel-right">
+                <!-- Stats Overview (Initially Hidden or 0) -->
+                <div class="stats-grid" id="stats-panel">
+                    <div class="stat-card total-processed">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="layers"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Procesados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card status-ready">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="check-circle-2"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-value" id="stat-ready">0</span>
+                            <span class="stat-label">Listos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card status-duplicate">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="copy"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-value" id="stat-duplicates">0</span>
+                            <span class="stat-label">Duplicados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card status-error">
+                        <div class="stat-icon-wrapper">
+                            <i data-lucide="alert-triangle"></i>
+                        </div>
+                        <div class="stat-data">
+                            <span class="stat-value" id="stat-errors">0</span>
+                            <span class="stat-label">Con Errores</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Table Card -->
+                <div class="card glass-card table-card hide" id="table-container">
+                    <div class="table-header-bar">
+                        <div class="table-title-group">
+                            <i data-lucide="table-properties" class="header-icon text-indigo"></i>
+                            <h2 class="card-title">Vista Previa Editable</h2>
+                        </div>
+                        <div class="table-actions">
+                            <button id="btn-export-csv" class="btn btn-ghost btn-sm" title="Descargar CSV">
+                                <i data-lucide="download"></i> CSV
+                            </button>
+                            <button id="btn-export-json" class="btn btn-ghost btn-sm" title="Descargar JSON">
+                                <i data-lucide="file-json"></i> JSON
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-scroll-container">
+                        <table class="leads-table" id="leads-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-checkbox">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" id="select-all-leads" checked>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </th>
+                                    <th>Nombre Negocio</th>
+                                    <th>Categoría</th>
+                                    <th>Teléfono</th>
+                                    <th>Dirección</th>
+                                    <th>Estado</th>
+                                    <th>Estado Web</th>
+                                    <th>Motivo Web</th>
+                                    <th>WhatsApp Web</th>
+                                    <th>Tiene Instagram</th>
+                                    <th>Cant. Fotos</th>
+                                    <th>Actividad Reciente</th>
+                                    <th>Rating</th>
+                                    <th>Reviews</th>
+                                    <th>Score</th>
+                                    <th>Prioridad</th>
+                                    <th>Análisis IA</th>
+                                    <th>Mensaje</th>
+                                    <th>Sitio Web</th>
+                                    <th class="col-actions">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body">
+                                <!-- Dynamic rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Footer Actions -->
+                    <div class="table-footer-bar">
+                        <div class="selected-counter">
+                            <span id="selected-count-label">0 seleccionados para guardar</span>
+                        </div>
+                        <button id="save-selected-btn" class="btn btn-success">
+                            <span class="btn-text">Guardar leads seleccionados</span>
+                            <i data-lucide="save" class="btn-icon icon-save"></i>
+                            <i data-lucide="loader-2" class="btn-icon icon-loader spin hide"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Placeholder Empty State -->
+                <div class="card glass-card empty-state-card" id="empty-state">
+                    <div class="empty-state-icon">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                    <h3>No hay leads procesados</h3>
+                    <p>Pega tu scrap en la caja de la izquierda y haz clic en "Procesar datos" para generar la vista previa limpia y organizada.</p>
+                </div>
+
+                <!-- Save Results Notification Card -->
+                <div class="card glass-card results-summary-card hide" id="results-summary">
+                    <div class="results-header">
+                        <div class="success-ring">
+                            <i data-lucide="party-popper"></i>
+                        </div>
+                        <div>
+                            <h3 id="results-title">Importación completada</h3>
+                            <p class="results-subtitle" id="results-timestamp">Registrado el 08/06/2026 a las 20:50</p>
+                        </div>
+                    </div>
+                    <div class="results-grid">
+                        <div class="result-metric">
+                            <span class="metric-val" id="res-processed">0</span>
+                            <span class="metric-lbl">Procesados</span>
+                        </div>
+                        <div class="result-metric">
+                            <span class="metric-val text-success" id="res-saved">0</span>
+                            <span class="metric-lbl">Guardados</span>
+                        </div>
+                        <div class="result-metric">
+                            <span class="metric-val text-duplicate" id="res-duplicates">0</span>
+                            <span class="metric-lbl">Duplicados</span>
+                        </div>
+                        <div class="result-metric">
+                            <span class="metric-val text-error" id="res-errors">0</span>
+                            <span class="metric-lbl">Con Errores</span>
+                        </div>
+                    </div>
+                    <div class="results-actions">
+                        <button id="reset-form-btn" class="btn btn-ghost btn-block">
+                            <i data-lucide="refresh-cw"></i> Importar nuevos datos
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- View: CRM LEADS -->
+        <main class="app-grid view-section hide" id="view-crm" style="grid-template-columns: 1fr;">
+            <section class="panel-full">
+                <div class="card glass-card">
+                    <div class="card-header" style="justify-content: space-between;">
+                        <div class="card-title-group">
+                            <i data-lucide="layout-dashboard" class="header-icon text-indigo"></i>
+                            <h2 class="card-title">Gestión de Leads (<span id="crm-total-count">0</span>)</h2>
+                        </div>
+                        <div class="crm-filters" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-ghost btn-sm crm-filter-btn active" data-filter="todos">Todos</button>
+                            <button class="btn btn-ghost btn-sm crm-filter-btn" data-filter="nuevo">Nuevos</button>
+                            <button class="btn btn-ghost btn-sm crm-filter-btn" data-filter="contactado">Contactados</button>
+                            <button class="btn btn-ghost btn-sm crm-filter-btn" data-filter="respondio">Respondió</button>
+                            <button class="btn btn-ghost btn-sm crm-filter-btn" data-filter="interesado">Interesados</button>
+                            <button class="btn btn-ghost btn-sm crm-filter-btn" data-filter="seguimiento">En Seguimiento</button>
+                            <button class="btn btn-ghost btn-sm crm-filter-btn" data-filter="cerrado_ganado">Cerrados</button>
+                            <div class="crm-search-wrapper">
+                                <i data-lucide="search" class="crm-search-icon"></i>
+                                <input type="text" id="crm-phone-search" class="crm-search-input" placeholder="Buscar por teléfono o nombre..." autocomplete="off">
+                            </div>
+                            <button id="refresh-crm-btn" class="btn btn-primary btn-sm">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>
+                            <button id="delete-all-crm-btn" class="btn btn-ghost btn-sm text-error" title="Eliminar todos los leads" style="margin-left: auto;">
+                                <i data-lucide="trash-2"></i> Borrar Todo
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-scroll-container">
+                        <table class="leads-table crm-table" id="crm-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">#</th>
+                                    <th>Negocio</th>
+                                    <th>Categoría</th>
+                                    <th>Teléfono</th>
+                                    <th>Score</th>
+                                    <th>Prioridad</th>
+                                    <th>Estado</th>
+                                    <th>Último Contacto</th>
+                                    <th>Próximo Seguimiento</th>
+                                    <th class="col-actions">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crm-table-body">
+                                <tr>
+                                    <td colspan="9" style="text-align: center; padding: 30px;">Cargando base de datos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination Controls -->
+                    <div class="crm-pagination" id="crm-pagination"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Settings & Integrations Modal -->
+    <div class="modal-overlay hide" id="settings-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal-card glass-modal">
+            <div class="modal-header">
+                <h3 id="modal-title" class="modal-title">Configuración de Destino</h3>
+                <button class="btn btn-icon-only btn-ghost close-modal-btn" aria-label="Cerrar modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="tab-local">Local / CSV</button>
+                    <button class="tab-btn" data-tab="tab-supabase">Supabase</button>
+                    <button class="tab-btn" data-tab="tab-webhook">Google Sheets / CRM</button>
+                </div>
+
+                <div class="tab-content" id="tab-local">
+                    <p class="tab-description">Guarda localmente en la memoria del navegador (`localStorage`) y descarga tus leads limpios en formatos estándar listos para importar en Excel o Google Sheets.</p>
+                    <div class="demo-preview-box">
+                        <i data-lucide="shield-check"></i>
+                        <div>
+                            <h4>Almacenamiento Local Activo</h4>
+                            <p>No requiere servidores. Los datos nunca salen de tu navegador.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content hide" id="tab-supabase">
+                    <p class="tab-description">Conecta directamente con tu tabla en Supabase para guardar tus leads en tiempo real.</p>
+                    
+                    <div class="form-group">
+                        <label for="supabase-url">Supabase URL</label>
+                        <input type="url" id="supabase-url" placeholder="https://xxxxxx.supabase.co" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supabase-key">Supabase Anon Key</label>
+                        <input type="password" id="supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supabase-table">Nombre de Tabla</label>
+                        <input type="text" id="supabase-table" value="leads" placeholder="leads" class="form-input">
+                    </div>
+                </div>
+
+                <div class="tab-content hide" id="tab-webhook">
+                    <p class="tab-description">Envía los leads procesados a una automatización de Google Sheets (como un webhook de n8n, Make, o Zapier).</p>
+                    
+                    <div class="form-group">
+                        <label for="webhook-url">Webhook URL</label>
+                        <input type="url" id="webhook-url" placeholder="https://n8n.mi-servidor.com/webhook/..." class="form-input">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost close-modal-btn">Cancelar</button>
+                <button id="save-settings-btn" class="btn btn-primary">Guardar Configuración</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lead Profile Slide Panel (Fase 4 & 5) -->
+    <div class="profile-overlay hide" id="profile-overlay"></div>
+    <div class="profile-panel" id="profile-panel">
+        <div class="profile-header">
+            <h2 id="profile-name">Nombre del Negocio</h2>
+            <button class="btn btn-icon-only btn-ghost" id="close-profile-btn" aria-label="Cerrar perfil">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="profile-content">
+            <!-- Pestañas internas del perfil -->
+            <div class="profile-tabs">
+                <button class="profile-tab active" data-tab="info">Información</button>
+                <button class="profile-tab" data-tab="analysis">Análisis IA</button>
+                <button class="profile-tab" data-tab="history">Nota-Lead📝</button>
+            </div>
+            
+            <div class="profile-tab-content" id="ptab-info">
+                <div class="info-group"><i data-lucide="map-pin"></i> <strong>Dirección:</strong> <span id="prof-address">-</span></div>
+                <div class="info-group"><i data-lucide="phone"></i> <strong>Teléfono:</strong> <span id="prof-phone">-</span></div>
+                <div class="info-group"><i data-lucide="globe"></i> <strong>Web:</strong> <span id="prof-web">-</span></div>
+                <div class="info-group"><i data-lucide="instagram"></i> <strong>Instagram / Redes:</strong> <span id="prof-instagram">-</span></div>
+                <div class="info-group mt-3">
+                    <i data-lucide="alert-circle"></i> <strong>Prioridad:</strong> <span id="prof-prioridad" class="badge-priority">-</span>
+                </div>
+                <div class="info-group mt-1">
+                    <i data-lucide="star"></i> <strong>Rating:</strong> <span id="prof-rating">-</span>⭐ (<span id="prof-reviews">0</span> reseñas)
+                </div>
+                <div class="info-group mt-3" style="align-items: center; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px;">
+                    <strong style="margin-right: 10px;"><i data-lucide="tag" style="display:inline; width:16px; margin-bottom:-3px;"></i> Estado:</strong>
+                    <select id="prof-estado" class="form-input" style="width: 100%; max-width: 200px; padding: 6px;">
+                        <option value="nuevo">Nuevo</option>
+                        <option value="pendiente_contacto">Pendiente Contacto</option>
+                        <option value="contactado">Contactado</option>
+                        <option value="respondio">Respondió</option>
+                        <option value="interesado">Interesado</option>
+                        <option value="propuesta_enviada">Propuesta Enviada</option>
+                        <option value="seguimiento">Seguimiento</option>
+                        <option value="cerrado_ganado">Cerrado Ganado</option>
+                        <option value="cerrado_perdido">Cerrado Perdido</option>
+                        <option value="descartado">Descartado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="profile-tab-content hide" id="ptab-analysis">
+                <h4>Insights Generales</h4>
+                <p id="prof-ai-analysis" class="text-muted">-</p>
+                <div class="ai-box mt-3">
+                    <h4>Generador de Mensajes</h4>
+                    <p class="text-sm text-muted">Genera un mensaje de primer contacto basado en la categoría, rating y redes de este lead.</p>
+                    <textarea id="prof-ai-message" class="form-input mt-2" rows="4" placeholder="El mensaje aparecerá aquí..."></textarea>
+                    <button id="btn-generate-msg" class="btn btn-primary btn-block mt-2">
+                        <i data-lucide="bot"></i> Generar mensaje IA
+                    </button>
+                    <a id="btn-open-whatsapp" href="#" target="_blank" class="btn btn-success btn-block mt-2 hide">
+                        <i data-lucide="message-circle"></i> Abrir WhatsApp
+                    </a>
+                </div>
+            </div>
+
+            <div class="profile-tab-content hide" id="ptab-history">
+                <div class="info-group"><strong>Importado:</strong> <span id="prof-import-date">-</span></div>
+                <div class="info-group"><strong>Últ. Contacto:</strong> <span id="prof-last-contact">-</span></div>
+                <div class="form-group mt-3">
+                    <label>Notas del Vendedor</label>
+                    <textarea id="prof-notes" class="form-input" rows="2" placeholder="Escribe aquí para agregar o editar la nota..."></textarea>
+                    <button id="btn-save-notes" class="btn btn-ghost btn-sm mt-2">Guardar Notas</button>
+                </div>
+                <div id="saved-note-container" class="mt-3 hide" style="background: rgba(255, 165, 0, 0.1); border-left: 3px solid var(--accent-color); padding: 12px; border-radius: 4px;">
+                    <strong style="display: block; font-size: 0.8rem; color: var(--accent-color); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Nota Guardada:</strong>
+                    <p id="prof-saved-note-text" style="margin: 0; font-size: 0.95rem; line-height: 1.4; white-space: pre-wrap; color: var(--text-color);"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="app.js?v=17"></script>
+</body>
+</html>
